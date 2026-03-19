@@ -1,0 +1,29 @@
+import pandas as pd
+import os
+from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from pymongo import MongoClient
+
+load_dotenv()
+
+
+def load_and_clean_data(file_path):
+
+    df = pd.read_csv(file_path, index_col=0)
+
+# Remove rows with missing values (Standard practice)
+    df = df.dropna()
+
+    print(f"Data loaded and cleaned. length of data: {len(df)}")
+    return df
+
+
+def push_to_mySql(df):
+    user = os.getenv("MYSQL_USER")
+    password = os.getenv("MYSQL_PASSWORD")
+    host = os.getenv("MYSQL_HOST")
+    port = os.getenv("MYSQL_PORT")
+    database = os.getenv("MYSQL_DATABASE")
+
+    conn_str = f"mysql+pymysql://{user}:{password}@{host}:{port}/{database}"
+    engine = create_engine(conn_str)
