@@ -2,4 +2,5 @@ pandas
 sqlalchemy
 pymongo
 kaggle
-mysql-connector-python
+pymysql
+python-dotenv
