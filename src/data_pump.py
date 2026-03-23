@@ -32,7 +32,24 @@ def push_to_mySql(df):
     df.to_sql("spotify_tracks", con=engine, if_exists="replace", index=False)
     print("Data pushed to MySQL successfully.")
 
+def push_to_mongo_local(df):
+    uri = os.getenv("MONGO_LOCAL_URI")
+    client = MongoClient(uri)
 
+    # 2. Access the database and collection
+    # Note: Mongo creates these automatically if they don't exist!
+    db = client[os.getenv("DB_NAME")]
+    collection = db["spotify_tracks"]
+
+    #3. Transform: Convert to data frame to dictionary format for MongoDB
+    print("Transforming data for MongoDB...")
+    data_dict = df.to_dict(orient="records")
+
+    #4. Load: Insert data into MongoDB
+    collection.delete_many({})  # Clear existing data (optional)
+    collection.insert_many(data_dict)
+
+    print("Data pushed to MongoDB successfully.")
 
 if __name__ == "__main__":
     # 1. Extract & Transform
@@ -41,4 +58,6 @@ if __name__ == "__main__":
     
     # 2. Load
     push_to_mySql(df)
+
+    push_to_mongo_local(df)
 
