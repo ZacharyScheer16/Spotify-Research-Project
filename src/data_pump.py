@@ -26,4 +26,19 @@ def push_to_mySql(df):
     database = os.getenv("MYSQL_DATABASE")
 
     conn_str = f"mysql+pymysql://{user}:{password}@{host}:{port}/{database}"
-    engine = create_engine(conn_str)
+    
+
+    engine = create_engine(conn_str, echo=False)
+    df.to_sql("spotify_tracks", con=engine, if_exists="replace", index=False)
+    print("Data pushed to MySQL successfully.")
+
+
+
+if __name__ == "__main__":
+    # 1. Extract & Transform
+    file = "Spotify_dataset.csv"
+    df = load_and_clean_data(file)
+    
+    # 2. Load
+    push_to_mySql(df)
+
